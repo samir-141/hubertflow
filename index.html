@@ -9,8 +9,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <!-- html2pdf library for direct client-side PDF download -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- High-fidelity client-side PDF export engines -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
   <!-- App Container (Hidden during native printing) -->
@@ -63,9 +65,9 @@
         </div>
 
         <div class="export-dropdown-wrapper">
-          <button type="button" class="btn btn-primary" onclick="exportDirectPDF()" id="btn-export-pdf" title="Exportar reporte idéntico al PDF original">
+          <button type="button" class="btn btn-primary" onclick="exportDirectPDF('all')" id="btn-export-pdf" title="Exportar todas las hojas en un solo archivo PDF">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Descargar PDF
+            Descargar PDF (Todas las Hojas)
           </button>
           <button type="button" class="btn btn-secondary" onclick="window.print()" id="btn-print" title="Imprimir directamente o guardar PDF vectorial de alta resolución">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
@@ -88,9 +90,10 @@
             </div>
             <div class="quick-presets">
               <span class="preset-label">Cargar muestras:</span>
-              <button type="button" class="btn btn-xs btn-outline" onclick="loadSampleData('page1')">Pág 1 Original (C104-C143)</button>
-              <button type="button" class="btn btn-xs btn-outline" onclick="loadSampleData('page2')">Pág 2 Original (C144-C183)</button>
-              <button type="button" class="btn btn-xs btn-ghost" onclick="clearAllData()">Limpiar</button>
+              <button type="button" class="btn btn-xs btn-outline" onclick="loadSampleData('all')" title="Carga 80 colmenas en 2 hojas oficiales">Ambas Págs (80 colm.)</button>
+              <button type="button" class="btn btn-xs btn-outline" onclick="loadSampleData('page1')">Pág 1 (C104-C143)</button>
+              <button type="button" class="btn btn-xs btn-outline" onclick="loadSampleData('page2')">Pág 2 (C144-C183)</button>
+              <button type="button" class="btn btn-xs btn-ghost" onclick="clearAllData()">Limpiar Lote</button>
             </div>
           </div>
 
@@ -125,11 +128,17 @@
           <div class="card-header">
             <div class="card-title-group">
               <span class="card-tag">Herramienta Rápida</span>
-              <h3>Generador de Rango de Colmenas</h3>
+              <h3>Generador y Gestor de Hojas</h3>
             </div>
-            <button type="button" class="btn btn-xs btn-ghost toggle-collapse" onclick="toggleBatchTools()">
-              <span id="batch-toggle-text">Ocultar / Mostrar</span>
-            </button>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <button type="button" class="btn btn-xs btn-primary" onclick="addNewSheet()" title="Genera automáticamente 40 colmenas correlativas como una nueva hoja">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                + Añadir Nueva Hoja (40)
+              </button>
+              <button type="button" class="btn btn-xs btn-ghost toggle-collapse" onclick="toggleBatchTools()">
+                <span id="batch-toggle-text">Ocultar / Mostrar</span>
+              </button>
+            </div>
           </div>
 
           <div class="card-body" id="batch-tools-body">
@@ -144,7 +153,7 @@
               </div>
               <div class="form-group">
                 <label for="gen-count">Cantidad</label>
-                <input type="number" id="gen-count" value="40" min="1" max="200" title="40 colmenas caben exactamente en 1 hoja A4">
+                <input type="number" id="gen-count" value="40" min="1" max="400" title="40 colmenas caben exactamente en 1 hoja A4">
               </div>
               <div class="form-group">
                 <label>Valores Iniciales</label>
@@ -163,14 +172,17 @@
                   </label>
                 </div>
               </div>
-              <div class="form-group align-end">
-                <button type="button" class="btn btn-secondary" onclick="generateBatchHives()">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
-                  Generar Serie
+              <div class="form-group align-end" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="btn btn-primary" onclick="generateBatchHives('append')" title="Añade las colmenas sin borrar las actuales">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  + Añadir al Lote
+                </button>
+                <button type="button" class="btn btn-outline" onclick="generateBatchHives('replace')" title="Reemplaza todo el lote por esta serie">
+                  Reemplazar Lote
                 </button>
               </div>
             </div>
-            <p class="batch-helper-note">💡 Consejo: 40 colmenas equivalen exactamente a 1 hoja A4 (20 columna izquierda + 20 columna derecha).</p>
+            <p class="batch-helper-note">💡 Cada 40 colmenas conforman exactamente 1 hoja física A4 (20 col. izquierda + 20 col. derecha). Puedes añadir cuantas hojas necesites.</p>
           </div>
         </div>
 
@@ -187,9 +199,13 @@
               <div class="search-wrap">
                 <input type="text" id="search-input" placeholder="Buscar colmena (ej. C104)..." oninput="filterHiveList()">
               </div>
+              <button type="button" class="btn btn-sm btn-primary" onclick="addNewSheet()" title="Añadir una nueva hoja oficial con 40 colmenas correlativas">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                + Nueva Hoja (40)
+              </button>
               <button type="button" class="btn btn-sm btn-outline" onclick="addNewHiveRow()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                + Añadir Fila
+                + 1 Fila
               </button>
               <button type="button" class="btn btn-sm btn-outline" onclick="bulkSetMarks('maxpoll', true)" title="Marcar todas con Maxpoll">
                 + Maxpoll Todo
@@ -199,6 +215,10 @@
               </button>
             </div>
           </div>
+
+          <!-- Sheet Navigation Tabs (Ver Todo / Hoja 1 / Hoja 2 ...) -->
+          <div class="sheet-navigation-container" id="sheet-nav-form"></div>
+          <div id="sheet-banner-notice-wrap"></div>
 
           <!-- Quick Mobile / Tablet Entry Grid -->
           <div class="card-body no-padding">
@@ -244,30 +264,38 @@
       <section class="view-panel hidden" id="view-preview">
         <!-- Floating Controls Toolbar -->
         <div class="preview-controls-bar">
-          <div class="preview-info">
-            <strong>Vista Previa de Impresión Oficial (A4 Horizontal)</strong>
-            <span>Exactamente 1 hoja por cada 40 colmenas (20 + 20). 100% ajustado sin desbordes.</span>
-          </div>
-          <div class="preview-actions">
-            <div class="zoom-controls">
-              <label for="zoom-select">Zoom:</label>
-              <select id="zoom-select" onchange="adjustPreviewZoom(this.value)">
-                <option value="auto" selected>Auto (Ajustar a Pantalla)</option>
-                <option value="0.5">50%</option>
-                <option value="0.7">70%</option>
-                <option value="0.85">85%</option>
-                <option value="1.0">100% (Real A4)</option>
-              </select>
+          <div class="preview-info-row">
+            <div class="preview-info">
+              <strong>Vista Previa de Impresión Oficial (A4 Horizontal)</strong>
+              <span id="preview-sheet-counter-text">Cargando hojas del reporte...</span>
             </div>
-            <button type="button" class="btn btn-primary btn-sm" onclick="exportDirectPDF()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              Descargar PDF
-            </button>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="window.print()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-              Imprimir / Guardar PDF
-            </button>
+            <div class="preview-actions">
+              <div class="zoom-controls">
+                <label for="zoom-select">Zoom:</label>
+                <select id="zoom-select" onchange="adjustPreviewZoom(this.value)">
+                  <option value="auto" selected>Auto (Ajustar a Pantalla)</option>
+                  <option value="0.5">50%</option>
+                  <option value="0.7">70%</option>
+                  <option value="0.85">85%</option>
+                  <option value="1.0">100% (Real A4)</option>
+                </select>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm" onclick="exportDirectPDF('all')" id="btn-export-pdf-all" title="Descargar todas las hojas en un solo archivo PDF">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span id="btn-export-all-label">Descargar PDF (Todas las Hojas)</span>
+              </button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="exportDirectPDF('current')" id="btn-export-current" title="Descargar únicamente la hoja seleccionada en PDF">
+                Descargar Hoja Actual
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="window.print()" title="Imprimir todo el documento en formato A4 vectorial">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                Imprimir Todo A4
+              </button>
+            </div>
           </div>
+
+          <!-- Preview Sheet Selector Tabs -->
+          <div class="sheet-navigation-container preview-sheet-nav" id="sheet-nav-preview"></div>
         </div>
 
         <!-- Render Target for Printable Pages with Responsive Auto-Fit Wrapper -->
@@ -283,6 +311,43 @@
   <!-- CONTAINER FOR CLEAN PRINT EXPORT (Rendered for window.print and html2pdf) -->
   <div id="official-document-container" class="official-document-container">
     <!-- Pages rendered by Javascript dynamically -->
+  </div>
+
+  <!-- Toast Notification Container (Modern non-intrusive alerts) -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Custom Confirmation Modal (Replaces native confirm popup) -->
+  <div id="confirm-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div class="modal-header-icon">
+        <div class="modal-icon-wrap" id="modal-icon-wrap">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="modal-content">
+          <h3 id="modal-title">¿Confirmar acción?</h3>
+          <p id="modal-message">Descripción de la acción.</p>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-sm btn-outline" id="modal-btn-cancel">Cancelar</button>
+        <button type="button" class="btn btn-sm btn-primary" id="modal-btn-confirm">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF Generation Progress Modal -->
+  <div id="pdf-progress-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-card pdf-progress-box">
+      <div class="spinner-bee">
+        <div class="spinner-circle"></div>
+      </div>
+      <h3>Generando Documento PDF Oficial</h3>
+      <p id="pdf-progress-status">Procesando hojas de auditoría en alta resolución...</p>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="pdf-progress-bar" style="width: 0%;"></div>
+      </div>
+      <span class="progress-percent" id="pdf-progress-text">Iniciando...</span>
+    </div>
   </div>
 
   <script src="app.js"></script>
