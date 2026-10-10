@@ -1,0 +1,1083 @@
+/* ==========================================================================
+   BEEFLOW Formulario de Auditoría de Servicio - CSS Design System & Print
+   ========================================================================== */
+
+:root {
+  /* Design Tokens - Modern App UI */
+  --bg-app: #f1f5f9;
+  --bg-card: #ffffff;
+  --border-card: #e2e8f0;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --primary: #d97706;          /* Honey Gold / Bee Accent */
+  --primary-hover: #b45309;
+  --primary-light: #fef3c7;
+  --secondary: #0f172a;
+  --secondary-hover: #1e293b;
+  --accent-green: #059669;
+  --accent-green-light: #d1fae5;
+  --accent-red: #dc2626;
+  --accent-red-light: #fee2e2;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Official BEEFLOW Print Dimensions (A4 Landscape = 297mm x 210mm) */
+  --sheet-width: 297mm;
+  --sheet-height: 210mm;
+}
+
+/* Base Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ==========================================================================
+   APP HEADER & NAVIGATION
+   ========================================================================== */
+.app-header {
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo-badge {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.4);
+}
+
+.brand-info h1 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.brand-info .subtitle {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* Header Stats Bar */
+.header-stats {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(30, 41, 59, 0.8);
+  padding: 6px 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  padding: 0 6px;
+}
+
+.stat-pill:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  padding-right: 12px;
+}
+
+.stat-label {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.stat-val {
+  font-weight: 700;
+  color: #f8fafc;
+  font-family: var(--font-mono);
+}
+
+.stat-val.highlight {
+  color: #fbbf24;
+}
+
+.stat-val.danger {
+  color: #f87171;
+}
+
+/* Header Actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tab-switch {
+  display: flex;
+  background: #1e293b;
+  padding: 3px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  color: #ffffff;
+}
+
+.tab-btn.active {
+  background: #f59e0b;
+  color: #0f172a;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.export-dropdown-wrapper {
+  display: flex;
+  gap: 8px;
+}
+
+/* ==========================================================================
+   BUTTONS & FORM CONTROLS
+   ========================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+  border-color: #d97706;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #d97706, #b45309);
+  box-shadow: 0 4px 10px rgba(217, 119, 6, 0.3);
+}
+
+.btn-secondary {
+  background: #334155;
+  color: #f8fafc;
+  border-color: #475569;
+}
+
+.btn-secondary:hover {
+  background: #475569;
+}
+
+.btn-outline {
+  background: #ffffff;
+  color: #334155;
+  border-color: #cbd5e1;
+}
+
+.btn-outline:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: #64748b;
+}
+
+.btn-ghost:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.btn-sm {
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  border-radius: var(--radius-sm);
+}
+
+.btn-xs {
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  border-radius: 4px;
+}
+
+/* ==========================================================================
+   MAIN LAYOUT & CARDS
+   ========================================================================== */
+.main-layout {
+  max-width: 1380px;
+  margin: 20px auto;
+  padding: 0 20px 40px;
+}
+
+.view-panel.hidden {
+  display: none !important;
+}
+
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-card);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-card);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: #f8fafc;
+}
+
+.card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-tag {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+}
+
+.card-header h2, .card-header h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-body.no-padding {
+  padding: 0;
+}
+
+/* Metadata Grid */
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #475569;
+  letter-spacing: 0.03em;
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group input[type="number"],
+.form-group select {
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+  color: #0f172a;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+}
+
+.quick-presets {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.preset-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* Batch Generator Tools */
+.batch-grid {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.checkbox-pill-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding-top: 4px;
+}
+
+.check-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: #f1f5f9;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  user-select: none;
+}
+
+.check-pill input {
+  accent-color: #d97706;
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+.batch-helper-note {
+  margin-top: 10px;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+/* ==========================================================================
+   DATA ENTRY TABLE (TABLET / MOBILE / PC)
+   ========================================================================== */
+.entries-header {
+  background: #ffffff;
+}
+
+.entries-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.badge {
+  background: #e2e8f0;
+  color: #334155;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.entries-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.search-wrap input {
+  font-size: 0.82rem;
+  padding: 6px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-sm);
+  width: 200px;
+}
+
+.table-responsive-wrapper {
+  overflow-x: auto;
+  max-height: 640px;
+  position: relative;
+}
+
+.data-entry-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.data-entry-table thead {
+  position: sticky;
+  top: 0;
+  background: #f8fafc;
+  z-index: 10;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.data-entry-table th {
+  padding: 10px 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.data-entry-table td {
+  padding: 8px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.data-entry-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.data-entry-table tbody tr.row-dead {
+  background-color: #fef2f2;
+}
+
+.data-entry-table input.row-id-input {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 6px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  width: 100px;
+  text-transform: uppercase;
+}
+
+/* Marcos Entry with Quick Steppers */
+.marcos-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.marcos-btn {
+  background: #e2e8f0;
+  border: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.marcos-btn:hover {
+  background: #cbd5e1;
+}
+
+.marcos-input {
+  width: 46px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.92rem;
+  padding: 5px 2px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+}
+
+/* Touch Friendly Tactile Checkboxes for Tablet */
+.toggle-cell-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1.5px solid #cbd5e1;
+  background: #ffffff;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: transparent;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.toggle-cell-btn.checked {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+}
+
+.toggle-cell-btn.checked.btn-dead {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: #ffffff;
+}
+
+.toggle-cell-btn.checked.btn-gold {
+  background: #d97706;
+  border-color: #d97706;
+  color: #ffffff;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.btn-del-row {
+  color: #94a3b8;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+
+.btn-del-row:hover {
+  color: #ef4444;
+  background: #fee2e2;
+}
+
+.table-footer-bar {
+  padding: 12px 20px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.data-export-subgroup {
+  display: flex;
+  gap: 6px;
+}
+
+/* ==========================================================================
+   OFFICIAL BEEFLOW DOCUMENT PREVIEW & PRINT ENGINE
+   Matches 100% the exact visual layout from original BEEFLOW PDF
+   Guaranteed: EXACTLY 1 PAGE PER SHEET (NO ROW OVERFLOW OR SPLITTING)
+   ========================================================================== */
+.preview-controls-bar {
+  background: #ffffff;
+  padding: 12px 18px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-card);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.preview-info strong {
+  display: block;
+  font-size: 0.92rem;
+  color: #0f172a;
+}
+
+.preview-info span {
+  font-size: 0.76rem;
+  color: #64748b;
+}
+
+.preview-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.zoom-controls select {
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.8rem;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+/* Container that holds and centers preview sheets with responsive scaling */
+.preview-stage-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 10px 0 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.print-preview-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+  transform-origin: top center;
+  transition: transform 0.15s ease-out;
+}
+
+/* ==========================================================================
+   THE EXACT BEEFLOW SHEET (A4 LANDSCAPE: 297mm x 210mm)
+   Visual clone of the official PDF form.
+   Height is precisely calculated so 20 rows + headers + margins fit 100%
+   inside 210mm without ever overflowing onto a second page.
+   ========================================================================== */
+.beeflow-sheet {
+  width: 297mm;
+  height: 210mm;
+  max-height: 210mm;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 8mm 16mm 6mm 16mm; /* Compact padding to secure safe 1-page fit */
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  margin: 0 auto;
+  page-break-after: always;
+  break-after: page;
+  page-break-inside: avoid;
+  break-inside: avoid;
+  overflow: hidden; /* Hard limit prevents spilling to next page */
+}
+
+/* Document Header Area */
+.beeflow-doc-title {
+  text-align: center;
+  font-size: 14pt;
+  font-weight: bold;
+  letter-spacing: 0.2px;
+  margin-bottom: 4px;
+  line-height: 1.2;
+  color: #000000;
+}
+
+.beeflow-instructions {
+  font-size: 7.5pt;
+  line-height: 1.25;
+  color: #000000;
+  margin-bottom: 7px;
+  max-width: 95%;
+}
+
+.beeflow-instructions .inst-title {
+  font-weight: bold;
+}
+
+/* Metadata Fields Grid */
+.beeflow-meta-row {
+  display: grid;
+  grid-template-columns: 240px 240px 1fr;
+  row-gap: 3px;
+  column-gap: 28px;
+  font-size: 8.5pt;
+  margin-bottom: 8px;
+}
+
+.beeflow-meta-item {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.beeflow-meta-label {
+  font-weight: bold;
+  color: #000000;
+}
+
+.beeflow-meta-value {
+  color: #000000;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+/* Two Columns Table Container (Side by Side) */
+.beeflow-tables-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 32px;
+  width: 100%;
+}
+
+/* Single Table Column (20 rows each) */
+.beeflow-column-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.beeflow-column-table thead tr th {
+  font-size: 8pt;
+  font-weight: bold;
+  color: #000000;
+  padding: 0 2px 3px 2px;
+  vertical-align: bottom;
+  text-align: center;
+  border-bottom: none;
+}
+
+.beeflow-column-table thead tr th.th-id {
+  text-align: left;
+  width: 44px;
+  padding-left: 2px;
+}
+
+.beeflow-column-table thead tr th.th-marcos {
+  text-align: left;
+  width: 56px;
+  padding-left: 10px;
+}
+
+.beeflow-column-table thead tr th.th-muerta,
+.beeflow-column-table thead tr th.th-maxpoll,
+.beeflow-column-table thead tr th.th-tobee,
+.beeflow-column-table thead tr th.th-torta {
+  width: 46px;
+}
+
+/* Rows Styling - Strictly 5.75mm height to ensure 20 rows = 115mm */
+.beeflow-column-table tbody tr {
+  height: 5.75mm;
+  max-height: 5.75mm;
+}
+
+.beeflow-column-table tbody tr td {
+  padding: 0 2px;
+  vertical-align: middle;
+  text-align: center;
+  border: none;
+  line-height: 1;
+}
+
+/* Colmena Identifier (e.g. C104) */
+.beeflow-column-table tbody tr td.td-id {
+  text-align: left;
+  font-size: 9pt;
+  font-weight: normal;
+  color: #000000;
+  font-family: Arial, Helvetica, sans-serif;
+  letter-spacing: 0.2px;
+  padding-left: 2px;
+}
+
+/* Marcos digit cell */
+.beeflow-column-table tbody tr td.td-marcos {
+  text-align: center;
+  font-size: 9pt;
+  font-weight: normal;
+  color: #000000;
+  padding-left: 10px;
+}
+
+.marcos-ocr-box {
+  display: inline-block;
+  min-width: 12px;
+  height: 14px;
+  line-height: 14px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Checkboxes (Muerta, Maxpoll, Tobee, Torta P.) */
+.beeflow-box {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border: 1.2px solid #000000;
+  background-color: #ffffff;
+  vertical-align: middle;
+  box-sizing: border-box;
+}
+
+/* Marked 'X' state matching the official original PDF */
+.beeflow-box-x {
+  display: inline-block;
+  font-size: 9pt;
+  font-weight: bold;
+  line-height: 1;
+  color: #000000;
+  vertical-align: middle;
+}
+
+/* Footer OCR Note */
+.beeflow-footer-note {
+  position: absolute;
+  bottom: 5mm;
+  left: 16mm;
+  font-size: 7.2pt;
+  font-style: italic;
+  color: #444444;
+}
+
+/* Multi-sheet Pagination Indicator */
+.sheet-page-indicator {
+  position: absolute;
+  bottom: 5mm;
+  right: 16mm;
+  font-size: 7.2pt;
+  color: #666666;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ==========================================================================
+   OFFICIAL CONTAINER VISIBILITY HANDLING
+   ========================================================================== */
+#official-document-container {
+  display: none;
+}
+
+/* ==========================================================================
+   PRINT MEDIA STYLES (CRUCIAL FOR EXACT PDF OUTPUT)
+   ========================================================================== */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  html, body {
+    width: 297mm !important;
+    height: 210mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    overflow: hidden !important;
+  }
+
+  /* Hide entire interactive dashboard */
+  .no-print,
+  .app-header,
+  .main-layout,
+  .preview-controls-bar {
+    display: none !important;
+  }
+
+  /* Show ONLY official document container with exact sheets */
+  #official-document-container {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .beeflow-sheet {
+    width: 297mm !important;
+    height: 210mm !important;
+    max-height: 210mm !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    page-break-after: always !important;
+    break-after: page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    overflow: hidden !important;
+  }
+}
+
+/* ==========================================================================
+   100% RESPONSIVE DESIGN (MÓVIL, TABLET, DESKTOP)
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .main-layout {
+    padding: 0 14px 30px;
+    margin: 14px auto;
+  }
+
+  .beeflow-meta-row {
+    grid-template-columns: 200px 200px 1fr;
+    column-gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    padding: 10px 14px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .header-brand {
+    justify-content: flex-start;
+  }
+
+  .header-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 8px 12px;
+  }
+
+  .stat-pill {
+    padding: 4px 6px;
+    border-right: none !important;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .tab-switch {
+    width: 100%;
+  }
+
+  .tab-btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .export-dropdown-wrapper {
+    width: 100%;
+  }
+
+  .export-dropdown-wrapper .btn {
+    flex: 1;
+  }
+
+  .card-header {
+    padding: 12px 14px;
+  }
+
+  .meta-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .batch-grid {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .batch-grid .form-group input {
+    max-width: none !important;
+  }
+
+  .entries-toolbar {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .search-wrap {
+    width: 100%;
+  }
+
+  .search-wrap input {
+    width: 100%;
+  }
+
+  .table-footer-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .data-export-subgroup {
+    justify-content: space-between;
+  }
+
+  .preview-controls-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .preview-actions {
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-info h1 {
+    font-size: 1.1rem;
+  }
+
+  .header-stats {
+    grid-template-columns: 1fr 1fr;
+    font-size: 0.72rem;
+  }
+
+  .toggle-cell-btn {
+    min-width: 36px;
+    height: 28px;
+    font-size: 0.85rem;
+  }
+}
+

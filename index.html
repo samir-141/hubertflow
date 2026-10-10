@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BEEFLOW - Formulario de Auditoría de Servicio</title>
+  <meta name="description" content="Sistema de captura digital y generación de reportes en PDF del Formulario de Auditoría de Servicio BEEFLOW con formato visual idéntico para OCR.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- html2pdf library for direct client-side PDF download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+  <!-- App Container (Hidden during native printing) -->
+  <div class="app-container no-print">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-logo-badge">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <h1>BEEFLOW Auditor</h1>
+          <span class="subtitle">Auditoría de Servicio &amp; Generador OCR Oficial</span>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Bar -->
+      <div class="header-stats">
+        <div class="stat-pill" title="Total colmenas en el lote">
+          <span class="stat-label">Total Colmenas:</span>
+          <span class="stat-val" id="stat-total">0</span>
+        </div>
+        <div class="stat-pill" title="Promedio de marcos con abejas">
+          <span class="stat-label">Prom. Marcos:</span>
+          <span class="stat-val highlight" id="stat-avg-marcos">0.0</span>
+        </div>
+        <div class="stat-pill" title="Colmenas con baja / muertas">
+          <span class="stat-label">Muertas:</span>
+          <span class="stat-val danger" id="stat-muertas">0</span>
+        </div>
+        <div class="stat-pill" title="Hojas A4 generadas">
+          <span class="stat-label">Hojas A4:</span>
+          <span class="stat-val" id="stat-pages">1</span>
+        </div>
+      </div>
+
+      <!-- View Switcher & Action Buttons -->
+      <div class="header-actions">
+        <div class="tab-switch">
+          <button type="button" class="tab-btn active" id="tab-btn-form" onclick="switchView('form')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Captura (Móvil/Tablet)
+          </button>
+          <button type="button" class="tab-btn" id="tab-btn-preview" onclick="switchView('preview')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            Vista Previa Oficial (A4)
+          </button>
+        </div>
+
+        <div class="export-dropdown-wrapper">
+          <button type="button" class="btn btn-primary" onclick="exportDirectPDF()" id="btn-export-pdf" title="Exportar reporte idéntico al PDF original">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Descargar PDF
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="window.print()" id="btn-print" title="Imprimir directamente o guardar PDF vectorial de alta resolución">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Imprimir A4
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="main-layout">
+      <!-- VIEW 1: DATA CAPTURE / FORM VIEW -->
+      <section class="view-panel" id="view-form">
+        <!-- Metadata Header Card -->
+        <div class="card meta-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="card-tag">Paso 1</span>
+              <h2>Metadatos de la Auditoría</h2>
+            </div>
+            <div class="quick-presets">
+              <span class="preset-label">Cargar muestras:</span>
+              <button type="button" class="btn btn-xs btn-outline" onclick="loadSampleData('page1')">Pág 1 Original (C104-C143)</button>
+              <button type="button" class="btn btn-xs btn-outline" onclick="loadSampleData('page2')">Pág 2 Original (C144-C183)</button>
+              <button type="button" class="btn btn-xs btn-ghost" onclick="clearAllData()">Limpiar</button>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="meta-grid">
+              <div class="form-group">
+                <label for="meta-campo">CAMPO *</label>
+                <input type="text" id="meta-campo" placeholder="Ej. Fundo Santa Teresa" value="FUNDO SANTA TERESA" oninput="updateMetadata()">
+              </div>
+              <div class="form-group">
+                <label for="meta-apicultor">APICULTOR *</label>
+                <input type="text" id="meta-apicultor" placeholder="Ej. Juan Carlos M." value="JUAN CARLOS M." oninput="updateMetadata()">
+              </div>
+              <div class="form-group">
+                <label for="meta-fecha">FECHA *</label>
+                <input type="date" id="meta-fecha" oninput="updateMetadata()">
+              </div>
+              <div class="form-group">
+                <label for="meta-proyecto">PROYECTO</label>
+                <input type="text" id="meta-proyecto" placeholder="Ej. Arándano Export 2026" value="ARANDANO 2026" oninput="updateMetadata()">
+              </div>
+              <div class="form-group">
+                <label for="meta-lote">LOTE</label>
+                <input type="text" id="meta-lote" placeholder="Ej. Lote 3B" value="LOTE 3B" oninput="updateMetadata()">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Batch Generator & Quick Tools Card -->
+        <div class="card tools-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <span class="card-tag">Herramienta Rápida</span>
+              <h3>Generador de Rango de Colmenas</h3>
+            </div>
+            <button type="button" class="btn btn-xs btn-ghost toggle-collapse" onclick="toggleBatchTools()">
+              <span id="batch-toggle-text">Ocultar / Mostrar</span>
+            </button>
+          </div>
+
+          <div class="card-body" id="batch-tools-body">
+            <div class="batch-grid">
+              <div class="form-group">
+                <label for="gen-prefix">Prefijo</label>
+                <input type="text" id="gen-prefix" value="C" style="max-width: 80px;">
+              </div>
+              <div class="form-group">
+                <label for="gen-start">Desde Nº</label>
+                <input type="number" id="gen-start" value="104" min="1" max="9999">
+              </div>
+              <div class="form-group">
+                <label for="gen-count">Cantidad</label>
+                <input type="number" id="gen-count" value="40" min="1" max="200" title="40 colmenas caben exactamente en 1 hoja A4">
+              </div>
+              <div class="form-group">
+                <label>Valores Iniciales</label>
+                <div class="checkbox-pill-group">
+                  <label class="check-pill">
+                    <input type="checkbox" id="gen-maxpoll" checked>
+                    <span>Maxpoll</span>
+                  </label>
+                  <label class="check-pill">
+                    <input type="checkbox" id="gen-tobee" checked>
+                    <span>ToBEE</span>
+                  </label>
+                  <label class="check-pill">
+                    <input type="checkbox" id="gen-torta">
+                    <span>Torta P.</span>
+                  </label>
+                </div>
+              </div>
+              <div class="form-group align-end">
+                <button type="button" class="btn btn-secondary" onclick="generateBatchHives()">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
+                  Generar Serie
+                </button>
+              </div>
+            </div>
+            <p class="batch-helper-note">💡 Consejo: 40 colmenas equivalen exactamente a 1 hoja A4 (20 columna izquierda + 20 columna derecha).</p>
+          </div>
+        </div>
+
+        <!-- Hives Data Entry Section -->
+        <div class="card entries-card">
+          <div class="card-header entries-header">
+            <div class="entries-title-wrap">
+              <span class="card-tag">Paso 2</span>
+              <h2>Registro de Colmenas</h2>
+              <span class="badge" id="badge-count">0 registradas</span>
+            </div>
+            
+            <div class="entries-toolbar">
+              <div class="search-wrap">
+                <input type="text" id="search-input" placeholder="Buscar colmena (ej. C104)..." oninput="filterHiveList()">
+              </div>
+              <button type="button" class="btn btn-sm btn-outline" onclick="addNewHiveRow()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                + Añadir Fila
+              </button>
+              <button type="button" class="btn btn-sm btn-outline" onclick="bulkSetMarks('maxpoll', true)" title="Marcar todas con Maxpoll">
+                + Maxpoll Todo
+              </button>
+              <button type="button" class="btn btn-sm btn-outline" onclick="bulkSetMarks('tobee', true)" title="Marcar todas con ToBEE">
+                + ToBEE Todo
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Mobile / Tablet Entry Grid -->
+          <div class="card-body no-padding">
+            <div class="table-responsive-wrapper">
+              <table class="data-entry-table" id="data-entry-table">
+                <thead>
+                  <tr>
+                    <th style="width: 50px;">#</th>
+                    <th style="width: 140px;">Identificador</th>
+                    <th style="width: 130px;">Marcos (0-10)</th>
+                    <th style="width: 110px;" class="text-center">Muerta</th>
+                    <th style="width: 110px;" class="text-center">Maxpoll</th>
+                    <th style="width: 110px;" class="text-center">ToBEE</th>
+                    <th style="width: 110px;" class="text-center">Torta P.</th>
+                    <th style="width: 80px;" class="text-center">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="hives-tbody">
+                  <!-- Rendered dynamically by app.js -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="table-footer-bar">
+              <button type="button" class="btn btn-sm btn-ghost" onclick="addNewHiveRow()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Añadir otra colmena al final
+              </button>
+              <div class="data-export-subgroup">
+                <button type="button" class="btn btn-xs btn-outline" onclick="exportDataJSON()">Exportar JSON</button>
+                <label class="btn btn-xs btn-outline" style="cursor: pointer; margin: 0;">
+                  Importar JSON
+                  <input type="file" id="json-file-input" accept=".json" style="display: none;" onchange="importDataJSON(event)">
+                </label>
+                <button type="button" class="btn btn-xs btn-outline" onclick="exportDataCSV()">Exportar CSV</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: PDF PREVIEW & OFFICIAL PRINT VIEW -->
+      <section class="view-panel hidden" id="view-preview">
+        <!-- Floating Controls Toolbar -->
+        <div class="preview-controls-bar">
+          <div class="preview-info">
+            <strong>Vista Previa de Impresión Oficial (A4 Horizontal)</strong>
+            <span>Exactamente 1 hoja por cada 40 colmenas (20 + 20). 100% ajustado sin desbordes.</span>
+          </div>
+          <div class="preview-actions">
+            <div class="zoom-controls">
+              <label for="zoom-select">Zoom:</label>
+              <select id="zoom-select" onchange="adjustPreviewZoom(this.value)">
+                <option value="auto" selected>Auto (Ajustar a Pantalla)</option>
+                <option value="0.5">50%</option>
+                <option value="0.7">70%</option>
+                <option value="0.85">85%</option>
+                <option value="1.0">100% (Real A4)</option>
+              </select>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" onclick="exportDirectPDF()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Descargar PDF
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="window.print()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Imprimir / Guardar PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- Render Target for Printable Pages with Responsive Auto-Fit Wrapper -->
+        <div class="preview-stage-wrapper" id="preview-stage-wrapper">
+          <div class="print-preview-stage" id="print-preview-stage">
+            <!-- Dynamically populated sheets will appear here -->
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- CONTAINER FOR CLEAN PRINT EXPORT (Rendered for window.print and html2pdf) -->
+  <div id="official-document-container" class="official-document-container">
+    <!-- Pages rendered by Javascript dynamically -->
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

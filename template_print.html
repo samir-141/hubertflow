@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>BEEFLOW - Plantilla Oficial de Auditoría de Servicio (A4 Horizontal)</title>
+  <style>
+    /* ====================================================================
+       BEEFLOW OFFICIAL PRINT TEMPLATE (OPCIÓN A - 100% REPRODUCCIÓN VISUAL)
+       ==================================================================== */
+    @page {
+      size: A4 landscape;
+      margin: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #e5e7eb;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #000000;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* Contenedor de cada hoja física A4 Landscape (297mm x 210mm) */
+    .beeflow-sheet {
+      width: 297mm;
+      height: 210mm;
+      max-height: 210mm;
+      background-color: #ffffff;
+      margin: 20px auto;
+      padding: 8mm 16mm 6mm 16mm;
+      position: relative;
+      box-sizing: border-box;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      page-break-after: always;
+      break-after: page;
+      page-break-inside: avoid;
+      break-inside: avoid;
+      overflow: hidden;
+    }
+
+    /* Encabezado */
+    .doc-title {
+      text-align: center;
+      font-size: 14pt;
+      font-weight: bold;
+      letter-spacing: 0.2px;
+      margin-bottom: 4px;
+      line-height: 1.2;
+    }
+
+    .instructions {
+      font-size: 7.5pt;
+      line-height: 1.25;
+      margin-bottom: 7px;
+    }
+
+    .instructions .strong {
+      font-weight: bold;
+    }
+
+    /* Metadatos */
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 240px 240px 1fr;
+      row-gap: 3px;
+      column-gap: 28px;
+      font-size: 8.5pt;
+      margin-bottom: 8px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .meta-item.align-right {
+      justify-content: flex-end;
+    }
+
+    .meta-label {
+      font-weight: bold;
+    }
+
+    .meta-val {
+      font-weight: normal;
+      text-transform: uppercase;
+    }
+
+    /* Contenedor de 2 columnas de tabla */
+    .tables-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 32px;
+      width: 100%;
+    }
+
+    .audit-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .audit-table thead tr th {
+      font-size: 8pt;
+      font-weight: bold;
+      padding: 0 2px 3px 2px;
+      vertical-align: bottom;
+      text-align: center;
+      border: none;
+    }
+
+    .audit-table thead tr th.col-id {
+      text-align: left;
+      width: 44px;
+      padding-left: 2px;
+    }
+
+    .audit-table thead tr th.col-marcos {
+      text-align: left;
+      width: 56px;
+      padding-left: 10px;
+    }
+
+    .audit-table thead tr th.col-box {
+      width: 46px;
+    }
+
+    .audit-table tbody tr {
+      height: 5.75mm;
+      max-height: 5.75mm;
+    }
+
+    .audit-table tbody tr td {
+      padding: 0 2px;
+      vertical-align: middle;
+      text-align: center;
+      border: none;
+      line-height: 1;
+    }
+
+    .audit-table tbody tr td.cell-id {
+      text-align: left;
+      font-size: 9pt;
+      letter-spacing: 0.2px;
+      padding-left: 2px;
+    }
+
+    .audit-table tbody tr td.cell-marcos {
+      text-align: center;
+      font-size: 9pt;
+      padding-left: 10px;
+    }
+
+    /* Recuadro de checkbox OCR */
+    .box-square {
+      display: inline-block;
+      width: 11px;
+      height: 11px;
+      border: 1.2px solid #000000;
+      background: #ffffff;
+      box-sizing: border-box;
+      vertical-align: middle;
+    }
+
+    .box-x {
+      display: inline-block;
+      font-size: 9pt;
+      font-weight: bold;
+      line-height: 1;
+      vertical-align: middle;
+    }
+
+    /* Nota al pie oficial */
+    .footer-note {
+      position: absolute;
+      bottom: 5mm;
+      left: 16mm;
+      font-size: 7.2pt;
+      font-style: italic;
+      color: #444444;
+    }
+
+    /* Barra de herramientas en pantalla */
+    .screen-toolbar {
+      max-width: 297mm;
+      margin: 15px auto 0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .btn-print {
+      background: #111827;
+      color: #ffffff;
+      border: none;
+      padding: 8px 18px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    @media print {
+      body {
+        background: transparent !important;
+      }
+      .screen-toolbar {
+        display: none !important;
+      }
+      .beeflow-sheet {
+        margin: 0 !important;
+        box-shadow: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Barra de control (Solo pantalla) -->
+  <div class="screen-toolbar">
+    <button class="btn-print" onclick="window.print()">Imprimir / Guardar en PDF</button>
+  </div>
+
+  <!-- Contenedor donde se inyectan las hojas -->
+  <div id="beeflow-pages-target"></div>
+
+  <script>
+    /**
+     * Función JavaScript para inyectar datos y generar las hojas del reporte
+     * @param {Object} data - Objeto con { metadata: {...}, colmenas: [...] }
+     */
+    function renderBeeFlowAudit(data) {
+      const container = document.getElementById('beeflow-pages-target');
+      if (!container) return;
+
+      const meta = data.metadata || {};
+      const colmenas = data.colmenas || [];
+      const totalPages = Math.max(1, Math.ceil(colmenas.length / 40));
+
+      let outputHtml = '';
+
+      for (let p = 0; p < totalPages; p++) {
+        const start = p * 40;
+        const leftHives = colmenas.slice(start, start + 20);
+        const rightHives = colmenas.slice(start + 20, start + 40);
+
+        outputHtml += `
+          <div class="beeflow-sheet">
+            <div class="doc-title">Formulario de auditoria de servicio - BEEFLOW</div>
+            
+            <div class="instructions">
+              <div><span class="strong">INSTRUCCIONES:</span> Escriba un solo digito claro dentro de cada recuadro para el numero de marcos cubiertos con abejas.</div>
+              <div>Marque con "X" en el recuadro de Muerta, Maxpoll, ToBEE, Torta P. en caso que corresponda.</div>
+            </div>
+
+            <div class="meta-grid">
+              <div class="meta-item"><span class="meta-label">CAMPO:</span> <span class="meta-val">${meta.campo || ''}</span></div>
+              <div class="meta-item"><span class="meta-label">APICULTOR:</span> <span class="meta-val">${meta.apicultor || ''}</span></div>
+              <div class="meta-item align-right"><span class="meta-label">FECHA:</span> <span class="meta-val">${meta.fecha || ''}</span></div>
+              <div class="meta-item"><span class="meta-label">PROYECTO:</span> <span class="meta-val">${meta.proyecto || ''}</span></div>
+              <div class="meta-item"><span class="meta-label">LOTE:</span> <span class="meta-val">${meta.lote || ''}</span></div>
+              <div></div>
+            </div>
+
+            <div class="tables-split">
+              <!-- Columna Izquierda (20 filas) -->
+              <table class="audit-table">
+                <thead>
+                  <tr>
+                    <th class="col-id">N°</th>
+                    <th class="col-marcos">Marcos</th>
+                    <th class="col-box">Muerta</th>
+                    <th class="col-box">Maxpoll</th>
+                    <th class="col-box">Tobee</th>
+                    <th class="col-box">Torta P.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${buildTableRows(leftHives)}
+                </tbody>
+              </table>
+
+              <!-- Columna Derecha (20 filas) -->
+              <table class="audit-table">
+                <thead>
+                  <tr>
+                    <th class="col-id">N°</th>
+                    <th class="col-marcos">Marcos</th>
+                    <th class="col-box">Muerta</th>
+                    <th class="col-box">Maxpoll</th>
+                    <th class="col-box">Tobee</th>
+                    <th class="col-box">Torta P.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${buildTableRows(rightHives)}
+                </tbody>
+              </table>
+            </div>
+
+            <div class="footer-note">
+              Nota: la columna N° queda vacia a proposito; el sistema OCR no la interpreta.
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = outputHtml;
+    }
+
+    function buildTableRows(hives) {
+      let rows = '';
+      for (let i = 0; i < 20; i++) {
+        const h = hives[i];
+        if (h && h.id) {
+          rows += `
+            <tr>
+              <td class="cell-id">${h.id}</td>
+              <td class="cell-marcos">${h.marcos || ''}</td>
+              <td>${h.muerta ? '<span class="box-x">X</span>' : '<span class="box-square"></span>'}</td>
+              <td>${h.maxpoll ? '<span class="box-x">X</span>' : '<span class="box-square"></span>'}</td>
+              <td>${h.tobee ? '<span class="box-x">X</span>' : '<span class="box-square"></span>'}</td>
+              <td>${h.tortaP ? '<span class="box-x">X</span>' : '<span class="box-square"></span>'}</td>
+            </tr>
+          `;
+        } else {
+          rows += `
+            <tr>
+              <td class="cell-id"></td>
+              <td class="cell-marcos"></td>
+              <td><span class="box-square"></span></td>
+              <td><span class="box-square"></span></td>
+              <td><span class="box-square"></span></td>
+              <td><span class="box-square"></span></td>
+            </tr>
+          `;
+        }
+      }
+      return rows;
+    }
+
+    // Datos de demostración oficiales (Página 1: C104 a C143)
+    const demoData = {
+      metadata: {
+        campo: "SAN ISIDRO",
+        apicultor: "AGRÍCOLA VALLE",
+        fecha: "12/04/2026",
+        proyecto: "ARÁNDANO PREMIUM",
+        lote: "LOTE 4"
+      },
+      colmenas: []
+    };
+
+    for (let c = 104; c <= 143; c++) {
+      demoData.colmenas.push({
+        id: `C${c}`,
+        marcos: '',
+        muerta: false,
+        maxpoll: true, // Marcado con X como en la Pág 1 original
+        tobee: true,   // Marcado con X como en la Pág 1 original
+        tortaP: false
+      });
+    }
+
+    // Inyectar datos iniciales
+    renderBeeFlowAudit(demoData);
+  </script>
+</body>
+</html>
